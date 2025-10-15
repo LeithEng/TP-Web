@@ -79,6 +79,13 @@
           (click)="logout()"
           >Logout</a
         >
+        <a
+          class="nav-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          [routerLink]="['rainbow']"
+          routerLinkActive="active text-primary"
+          >rainbow</a
+        >
       </div>
     </div>
   </div>
