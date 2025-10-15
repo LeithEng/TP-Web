@@ -5,6 +5,7 @@ import { ROUTES, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { APP_ROUTES } from '../../../config/routes.config';
 import { FormsModule } from '@angular/forms';
+import { RainbowDirective } from 'src/app/directives/rainbow.directive';
 
 
 @Component({
@@ -12,7 +13,7 @@ import { FormsModule } from '@angular/forms';
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.css'],
     standalone: true,
-    imports: [FormsModule],
+    imports: [FormsModule , RainbowDirective],
 })
 export class LoginComponent {
   private authService = inject(AuthService);
