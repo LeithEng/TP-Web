@@ -1,7 +1,7 @@
 import { computed, Directive, Host, HostBinding, signal } from '@angular/core';
 
 @Directive({
-  selector: '[appRainbow]',
+  selector: 'input[appRainbow]',
   standalone: true,
   host: {
     '(keyup)': 'onKeyUp()'
