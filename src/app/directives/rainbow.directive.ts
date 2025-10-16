@@ -1,22 +1,24 @@
-import { Directive, HostBinding, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { Directive, ElementRef, HostBinding, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { BehaviorSubject, fromEvent, interval, map, Subject, Subscription, take, takeUntil } from 'rxjs';
+
 
 @Directive({
-  selector: '[appRainbow]',
+  selector: 'input[appRainbow]',
 })
 export class RainbowDirective implements OnInit, OnDestroy {
+  
+  constructor(private elementRef: ElementRef) {}
 
-  private sub! : Subscription ;
+    private colors: string[] = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'];
+  
+  @HostBinding('style.border-style') borderStyle = 'solid';
+  @HostBinding('style.border-width') borderWidth = '2px';
 
-  private colors: string[] = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'];
+
   @HostBinding('style.color') color: string = 'black';
   @HostBinding('style.border-color') borderColor: string = 'black';
 
-  color$ = new BehaviorSubject<string>('black');
-  
-  @HostListener('keyup') onKeyUp() {
-    this.color$.next(this.getRandomColor());
-  }
+  private destroy$ = new Subject<void>();
 
   getRandomColor(): string {
     const randomIndex = Math.floor(Math.random() * this.colors.length);
@@ -24,15 +26,22 @@ export class RainbowDirective implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.sub = this.color$.subscribe(color => {
-      console.log(color);
-      this.color = color;
-      this.borderColor = color;
-    });
+    fromEvent<KeyboardEvent>(this.elementRef.nativeElement, 'keyup')
+      .pipe(
+        map(() => this.getRandomColor()),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((color) => {
+        this.color = color;
+        this.borderColor = color;
+      });
   }
 
   ngOnDestroy(): void {
-    this.sub.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
+  
+
 
 }
