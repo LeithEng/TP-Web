@@ -65,8 +65,16 @@
                         class="nav-link"
                         [routerLink]="['rh']"
                         routerLinkActive="active text-primary"
-                        >Rh</a
-                        >
+                        >Rh</a>
+
+                        <a
+                          class="nav-link"
+                          [routerLink]="['ttc']"
+                          routerLinkActive="active text-primary"
+                          >ttc calculator</a>
+                    
+
+
                         @if (!authService.isAuthenticated()) {
                           <a
                             class="nav-link"
