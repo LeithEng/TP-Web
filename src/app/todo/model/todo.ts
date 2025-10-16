@@ -1,3 +1,10 @@
-export class Todo {
-  constructor(public name = '', public content = '') {}
+import { TodoStatus } from "../types/todo-status.type";
+
+
+export interface Todo {
+  id: number;
+  name: string;
+  content: string;
+  status: TodoStatus;
 }
+

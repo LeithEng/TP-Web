@@ -1,18 +1,226 @@
-<div class="row">
-  <div class="col">
-    <ol class="list-group">
-      @for (todo of todos; track todo) {
-        <li class="list-group-item">
-          {{todo.name}} : {{todo.content}}
-          <i (click)="deleteTodo(todo)" class="fa fa-trash" aria-hidden="true"></i>
-        </li>
-      }
-    </ol>
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="text-center mb-4">
+        <i class="bi bi-check2-square me-2"></i>Gestionnaire de Todos
+      </h1>
+    </div>
   </div>
-  <div class="col">
-    name: <input [(ngModel)]="todo.name" type="text" class="form-control">
-    content: <input [(ngModel)]="todo.content" type="text" class="form-control">
-    <button (click)="addTodo()" [disabled]="!todo.name.trim() || !todo.content.trim()"
-    class="btn btn-primary m-2">add</button>
+
+  <!-- Formulaire d'ajout -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-plus-circle me-2"></i>New Todo
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Name</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                [(ngModel)]="todoName"
+                placeholder="Todo name">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Description</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                [(ngModel)]="todoContent"
+                placeholder="Todo description">
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+              <button 
+                class="btn btn-success w-100"
+                (click)="addTodo()"
+                [disabled]="!todoName().trim() || !todoContent().trim()">
+                <i class="bi bi-plus-lg me-1"></i>Add
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
+
+  <!-- Tableau des todos -->
+  <div class="row g-3">
+    <!-- Colonne Waiting -->
+    <div class="col-md-4">
+      <div class="card border-warning">
+        <div class="card-header bg-warning text-dark">
+          <h5 class="mb-0">
+            <i class="bi bi-clock me-2"></i>
+            {{ TODO_STATUS.WAITING }}
+            <span class="badge bg-dark ms-2">{{ waitingTodos().length }}</span>
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="todo-list">
+            @for (todo of waitingTodos(); track todo.id) {
+              <div class="todo-item card mb-2">
+                <div class="card-body">
+                  <h6 class="card-title">{{ todo.name }}</h6>
+                  <p class="card-text small text-muted">{{ todo.content }}</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">#{{ todo.id }}</small>
+                    <div class="btn-group btn-group-sm">
+                      <button 
+                        class="btn btn-outline-primary"
+                        (click)="updateStatus(todo.id, TODO_STATUS.IN_PROGRESS)"
+                        title="Start">
+                        <i class="bi bi-play-fill"></i>
+                        Start
+                      </button>
+                      <button 
+                        class="btn btn-outline-success "
+                        (click)="updateStatus(todo.id, TODO_STATUS.DONE)"
+                        title="Mark as done">
+                        <i class="bi bi-check-lg"></i>
+                        done
+                      </button>
+                      <button 
+                        class="btn btn-outline-danger"
+                        (click)="deleteTodo(todo.id)"
+                        title="Delete">
+                        Delete
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+            
+            @if (waitingTodos().length === 0) {
+              <div class="text-center text-muted py-3">
+                <i class="bi bi-inbox display-6"></i>
+                <p class="mt-2">No pending tasks</p>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Colonne In Progress -->
+    <div class="col-md-4">
+      <div class="card border-info">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-play-circle me-2"></i>
+            {{ TODO_STATUS.IN_PROGRESS }}
+            <span class="badge bg-dark ms-2">{{ inProgressTodos().length }}</span>
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="todo-list">
+            @for (todo of inProgressTodos(); track todo.id) {
+              <div class="todo-item card mb-2">
+                <div class="card-body">
+                  <h6 class="card-title">{{ todo.name }}</h6>
+                  <p class="card-text small text-muted">{{ todo.content }}</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">#{{ todo.id }}</small>
+                    <div class="btn-group btn-group-sm">
+                      <button 
+                        class="btn btn-outline-warning"
+                        (click)="updateStatus(todo.id, TODO_STATUS.WAITING)"
+                        title="Put back in waiting">
+                        back in waiting
+                        <i class="bi bi-arrow-left"></i>
+                      </button>
+                      <button 
+                        class="btn btn-outline-success"
+                        (click)="updateStatus(todo.id, TODO_STATUS.DONE)"
+                        title="Mark as done">
+                        done
+                        <i class="bi bi-check-lg"></i>
+                      </button>
+                      <button 
+                        class="btn btn-outline-danger"
+                        (click)="deleteTodo(todo.id)"
+                        title="Delete">
+                        Delete
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+            
+            @if (inProgressTodos().length === 0) {
+              <div class="text-center text-muted py-3">
+                <i class="bi bi-hourglass-split display-6"></i>
+                <p class="mt-2">No tasks in progress</p>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Colonne Done -->
+    <div class="col-md-4">
+      <div class="card border-success">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-check-circle me-2"></i>
+            {{ TODO_STATUS.DONE }}
+            <span class="badge bg-dark ms-2">{{ doneTodos().length }}</span>
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="todo-list">
+            @for (todo of doneTodos(); track todo.id) {
+              <div class="todo-item card mb-2 bg-light">
+                <div class="card-body">
+                  <h6 class="card-title ">{{ todo.name }}</h6>
+                  <p class="card-text small text-muted">{{ todo.content }}</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">#{{ todo.id }}</small>
+                    <div class="btn-group btn-group-sm">
+                      <button 
+                        class="btn btn-outline-info"
+                        (click)="updateStatus(todo.id, TODO_STATUS.IN_PROGRESS)"
+                        title="Resume task">
+                        Back in progress
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                      </button>
+                      <button 
+                        class="btn btn-outline-warning"
+                        (click)="updateStatus(todo.id, TODO_STATUS.WAITING)"
+                        title="Put back in waiting">
+                        back in waiting
+                        <i class="bi bi-clock"></i>
+                      </button>
+                      <button 
+                        class="btn btn-outline-danger"
+                        (click)="deleteTodo(todo.id)"
+                        title="Delete">
+                        Delete
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+            
+            @if (doneTodos().length === 0) {
+              <div class="text-center text-muted py-3">
+                <i class="bi bi-check2-all display-6"></i>
+                <p class="mt-2">No completed tasks</p>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
