@@ -1,17 +1,17 @@
-import { Component } from "@angular/core";
+import { Component, Signal } from "@angular/core";
 import { Cv } from "../model/cv";
 import { LoggerService } from "../../services/logger.service";
 import { ToastrService } from "ngx-toastr";
 import { CvService } from "../services/cv.service";
+import { catchError, Observable, of, tap } from "rxjs";
 @Component({
   selector: "app-cv",
   templateUrl: "./cv.component.html",
   styleUrls: ["./cv.component.css"],
 })
 export class CvComponent {
-  cvs: Cv[] = [];
-  selectedCv: Cv | null = null;
-  /*   selectedCv: Cv | null = null; */
+  cvs$! : Observable<Cv[]> ;
+  selectedCv$! : Observable<Cv | null>; 
   date = new Date();
 
   constructor(
@@ -19,19 +19,38 @@ export class CvComponent {
     private toastr: ToastrService,
     private cvService: CvService
   ) {
-    this.cvService.getCvs().subscribe({
-      next: (cvs) => {
-        this.cvs = cvs;
-      },
-      error: () => {
-        this.cvs = this.cvService.getFakeCvs();
-        this.toastr.error(`
-          Attention!! Les données sont fictives, problème avec le serveur.
-          Veuillez contacter l'admin.`);
-      },
-    });
-    this.logger.logger("je suis le cvComponent");
-    this.toastr.info("Bienvenu dans notre CvTech");
-    this.cvService.selectCv$.subscribe((cv) => (this.selectedCv = cv));
+    this.initializeCvs();
+    this.initializeSelectedCv();
   }
+
+  private initializeCvs(): void {
+    this.cvs$ = this.cvService.getCvs().pipe(
+      tap((cvs) => {
+        this.logger.logger(`Nombre de cvs reçus ${cvs.length}`);
+                    }
+          ),
+      catchError((error) => {
+        this.logger.logger(
+          "Erreur lors du chargement des cvs depuis l'API, chargement des cvs fictifs."
+        );
+        return of(this.cvService.getFakeCvs());
+      }
+      )
+    );
+  }
+
+  private initializeSelectedCv(): void {
+    this.selectedCv$ = this.cvService.selectCv$.pipe(
+      tap((cv) => {
+        this.logger.logger(`Cv sélectionné : ${cv?.firstname}`);
+      }),
+      catchError((error) => {
+        this.logger.logger("Erreur lors de la sélection du cv.");        
+          return of(null);
+        }
+      )
+);
+  }
+
+
 }
