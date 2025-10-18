@@ -1,0 +1,10 @@
+<p>color-input works! {{displayColor()}} </p>
+
+<input #Sinput [value]="color()" (input)="color.set(Sinput.value)" />
+
+<div 
+  class="preview"
+  [style.background]="displayColor()"
+  [style.border-color]="displayColor()">
+  *****************************************************************
+</div>
