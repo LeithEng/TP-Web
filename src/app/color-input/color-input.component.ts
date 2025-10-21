@@ -12,6 +12,8 @@ export class ColorInputComponent {
 
   color = signal<string>('black');
 
+  lastValidColor = signal
+
   displayColor = computed(() =>
     this.validColors.includes(this.color()) ? this.color() : 'black'
   );
