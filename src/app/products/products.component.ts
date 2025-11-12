@@ -7,11 +7,14 @@ import {
   takeWhile,
   scan,
   tap,
+  take,
+  shareReplay,
 } from "rxjs";
 import { Product } from "./dto/product.dto";
 import { ProductService } from "./services/product.service";
 import { Settings } from "./dto/product-settings.dto";
 import { DEFAUT_SETTINGS } from "./constants/default-settings.contant";
+import { ProductApiResponse } from "./dto/product-api-response.dto";
 
 @Component({
   selector: "app-products",
@@ -19,41 +22,71 @@ import { DEFAUT_SETTINGS } from "./constants/default-settings.contant";
   styleUrls: ["./products.component.css"],
 })
 export class ProductsComponent {
-  
+    constructor(private productService : ProductService) {}
+
   readonly settings$: BehaviorSubject<Settings> = new BehaviorSubject<Settings>(
     DEFAUT_SETTINGS
   );
 
-  products$!: Observable<Product[]>;
 
-  hasMoreProducts: boolean = true;
+  apiResponse$ : Observable<ProductApiResponse> = this.settings$.pipe(
+    concatMap((settings) => this.productService.getProducts(settings)),
+    scan ((allResponses, newResponse) => {
+        const combinedProducts = [...allResponses.products, ...newResponse.products];
+        return {
+            ...newResponse,
+            products: combinedProducts
+        };
+      }
+    ),
+    tap((response) => {
+      console.log("all products length :", response.products.length)
+      console.log("total products available:", response.total)
+      })
+    ,
+    takeWhile((response) => response.products.length < response.total , true),
+    shareReplay(1)
+  );
 
-  constructor(private productService : ProductService) {}
 
-  ngOnInit() {
-    this.products$ = this.settings$.pipe(
-      concatMap((settings) => this.productService.getProducts(settings)
-                    .pipe(
-                            tap(response => {
-                              const loadedProducts = settings.skip + response.products.length;
-                              this.hasMoreProducts = loadedProducts < response.total;
-                            }),
-                            map(response => response.products)
-                    ),
-                ),
-      scan((allProducts, newProducts) => [...allProducts, ...newProducts], [] as Product[]),
-      takeWhile(() => this.hasMoreProducts, true)
-      
-    );
-  }
 
+  products$ : Observable<Product[]> = this.apiResponse$.pipe(
+    map(response => response.products)
+  )
+
+
+  hasMoreProducts$: Observable<boolean> = this.apiResponse$.pipe(
+    map(response => response.products.length < response.total)
+  );
+
+  
+
+  
+  /*
   loadMore() {
     console.log("Load more products clicked");
-    if (this.hasMoreProducts) {
-      this.settings$.next({
+    this.settings$.next({
         limit : this.settings$.value.limit,
         skip: this.settings$.value.skip + this.settings$.value.limit,
-      });
-    }
+    });
+    
   }
+  */
+
+    loadMore() {
+      console.log("Load more products clicked");
+      this.hasMoreProducts$.pipe(take(1))
+        .subscribe(hasMore => {
+            if (hasMore) {
+                this.settings$.next({
+                  limit : this.settings$.value.limit,
+                  skip: this.settings$.value.skip + this.settings$.value.limit,
+                });
+            }
+            else {
+              console.log("No more products to load.");
+            }
+          } 
+        );
+    }
 }
