@@ -27,6 +27,7 @@ export class ProductsComponent {
     ),
   });
 
+  /*
   totalProducts = linkedSignal<{ total: number | undefined; hasValue: boolean }, number>({
     source: computed(() => ({
       total: this.productResource.value()?.total,
@@ -38,6 +39,18 @@ export class ProductsComponent {
         return previous?.value ?? 0;
       }
       return source.total;
+    }
+  });
+*/
+
+  totalProducts = linkedSignal<number | undefined, number>({
+    source: () => (this.productResource.value()?.total),
+    computation: (source, previous) => {
+      // check if source has no value or total is undefined
+      if (!this.productResource.hasValue || source === undefined) {
+        return previous?.value ?? 0;
+      }
+      return source;
     }
   });
 
@@ -56,7 +69,7 @@ export class ProductsComponent {
   });
 
   products = linkedSignal<Product[], Product[]>({
-    source : this.currentProducts,
+    source : () => this.currentProducts(),
     computation : (newProducts , previewProduct) =>{
       if (!previewProduct) return newProducts;
       return newProducts.length > 0 ? [...previewProduct.value, ...newProducts] : previewProduct.value;
