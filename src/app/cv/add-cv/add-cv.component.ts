@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { AbstractControl, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { CvService } from "../services/cv.service";
 import { Router } from "@angular/router";
@@ -6,6 +6,8 @@ import { ToastrService } from "ngx-toastr";
 import { APP_ROUTES } from "src/config/routes.config";
 import { Cv } from "../model/cv";
 import { JsonPipe } from "@angular/common";
+import { debounce, debounceTime } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
     selector: "app-add-cv",
@@ -23,7 +25,8 @@ export class AddCvComponent implements OnInit {
   private router = inject(Router);
   private toastr = inject(ToastrService);
   private formBuilder = inject(FormBuilder);
-
+  private destroyRef = inject(DestroyRef);
+  private readonly STORAGE_KEY = 'addCvFormData';
 
   form = this.formBuilder.group(
     {
@@ -58,12 +61,48 @@ export class AddCvComponent implements OnInit {
       }
       
     })
+
+    this.loadFromLocalStorage();
+
+    this.form.valueChanges.pipe(
+      debounceTime(500),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
+      next : () => {
+        const formData = this.form.getRawValue();
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(formData));
+      }
+    })
+    
   }
+
+  private loadFromLocalStorage(){
+    const data = localStorage.getItem(this.STORAGE_KEY);
+    if (data){
+      try{
+        const formData = JSON.parse(data);
+        this.form.patchValue(formData);
+        this.toastr.info("Restored saved form data.");
+      }
+      catch (error){
+        this.toastr.error("Failed to parse saved form data.");
+      }
+    }
+  }
+/*
+  private saveToLocalStorage(){
+    const formData = this.form.getRawValue();
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(formData));
+  }
+*/
+
+ 
 
   addCv() {
     
     this.cvService.addCv(this.form.getRawValue() as Cv).subscribe({
       next: (cv) => {
+        localStorage.removeItem(this.STORAGE_KEY);
         this.router.navigate([APP_ROUTES.cv]);
         this.toastr.success(`Le cv ${cv.firstname} ${cv.name}`);
       },
