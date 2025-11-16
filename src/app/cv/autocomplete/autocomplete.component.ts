@@ -30,8 +30,9 @@ export class AutocompleteComponent {
     //filter to avoid empty searches
     filter(name => !!name && name.trim().length > 0), //!!name to avoid null or undefined
     distinctUntilChanged(),
-    tap(() => console.log('Recherche en cours...')),
-    switchMap((name)=>this.cvService.selectByName(name))
+    tap((name) => console.log('Recherche en cours... | name = ',name)),
+    //switchMap((name)=>this.cvService.selectByName(name))
+    switchMap((name) => this.cvService.selectByProps(["name","firstname","job"], name))
   )
   searchResults = toSignal(this.Searchresult$,{initialValue:[]})
 

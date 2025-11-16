@@ -133,4 +133,23 @@ export class CvService {
   selectCv(cv: Cv) {
     this.#selectCvSuject$.next(cv);
   }
+
+  /**
+  * Recherche les cvs dont une des propriétés contient la chaine passée en paramètre
+  * @param properties : string[], les propriétés sur lesquelles on va requeter
+  * @param value : string, la valeur de la propriété sur laquelle on va requeter
+  */
+
+  selectByProps(properties: string[], value: string) {
+  const orArray = properties.map(prop => ({
+    [prop]: { like: `%${value}%` }
+  }));
+  const filter = JSON.stringify({
+    where: { or: orArray }
+  });
+  const params = new HttpParams().set('filter', filter);
+  return this.http.get<Cv[]>(API.cv, { params });
+}
+
+
 }
