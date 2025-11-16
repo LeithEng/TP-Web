@@ -15,11 +15,26 @@
   <input type="text" class="form-control" formControlName="age" /> 
   Cin:
   <input type="text" class="form-control" formControlName="cin" />
+  
   @if(cin.errors?.['cinNotUnique']){
     <div class="alert alert-danger">
       Cette Cin existe déjà
     </div>
   }
+
+  
+  @if (form.errors?.['cinAgeMismatch']) {
+  <div class="alert alert-danger">
+      La corrélation entre le CIN et l'âge est invalide :
+      @if (age.value >= 60) {
+        <br>Pour un âge ≥ 60 ans, les 2 premiers chiffres du CIN doivent être entre 00 et 19.
+      } @else {
+        <br>Pour un âge < 60 ans, les 2 premiers chiffres du CIN doivent être supérieurs à 19.
+      }
+  </div>
+  }
+
+
   @if (
     form.errors && form.errors['cinFirstCars'] && cin?.touched && age?.touched
     ) {
@@ -38,6 +53,7 @@
     </div>
   }
 
+  
   <button [disabled]="form.invalid || form.pending" class="btn btn-primary" (click)="addCv()">
     add cv
   </button>

@@ -9,6 +9,7 @@ import { JsonPipe } from "@angular/common";
 import { debounce, debounceTime } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { cinUniqueValidator } from "../validators/cin-unique.validator";
+import { cinAgeValidator } from "../validators/cin-age.validator";
 
 @Component({
     selector: "app-add-cv",
@@ -40,7 +41,7 @@ export class AddCvComponent implements OnInit {
         {
           validators: [Validators.required, Validators.pattern("[0-9]{8}")],
           asyncValidators: [cinUniqueValidator(this.cvService)],
-          updateOn: "blur",
+          //updateOn: "blur",
         },
       ],
       age: [
@@ -50,6 +51,9 @@ export class AddCvComponent implements OnInit {
         },
       ],
     },
+    {
+      validators: [cinAgeValidator()],
+    }
   );
 
   ngOnInit(): void {
