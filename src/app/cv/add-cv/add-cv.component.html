@@ -10,9 +10,16 @@
     </div>
   }
   Firstname:
-  <input type="text" class="form-control" formControlName="firstname" /> Age:
-  <input type="text" class="form-control" formControlName="age" /> Cin:
+  <input type="text" class="form-control" formControlName="firstname" /> 
+  Age:
+  <input type="text" class="form-control" formControlName="age" /> 
+  Cin:
   <input type="text" class="form-control" formControlName="cin" />
+  @if(cin.errors?.['cinNotUnique']){
+    <div class="alert alert-danger">
+      Cette Cin existe déjà
+    </div>
+  }
   @if (
     form.errors && form.errors['cinFirstCars'] && cin?.touched && age?.touched
     ) {
@@ -25,8 +32,15 @@
   Job: <input type="text" class="form-control" formControlName="job" /> Path:
   <input type="text" class="form-control" formControlName="path" />
 
-  <button [disabled]="form.invalid" class="btn btn-primary" (click)="addCv()">
+  @if(form.pending){
+    <div class="alert alert-warning">
+      Validation en cours...
+    </div>
+  }
+
+  <button [disabled]="form.invalid || form.pending" class="btn btn-primary" (click)="addCv()">
     add cv
   </button>
 </form>
+
 {{ form.errors | json }}

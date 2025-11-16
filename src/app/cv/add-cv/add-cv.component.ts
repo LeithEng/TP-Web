@@ -8,6 +8,7 @@ import { Cv } from "../model/cv";
 import { JsonPipe } from "@angular/common";
 import { debounce, debounceTime } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { cinUniqueValidator } from "../validators/cin-unique.validator";
 
 @Component({
     selector: "app-add-cv",
@@ -38,6 +39,8 @@ export class AddCvComponent implements OnInit {
         "",
         {
           validators: [Validators.required, Validators.pattern("[0-9]{8}")],
+          asyncValidators: [cinUniqueValidator(this.cvService)],
+          updateOn: "blur",
         },
       ],
       age: [
@@ -102,6 +105,7 @@ export class AddCvComponent implements OnInit {
     
     this.cvService.addCv(this.form.getRawValue() as Cv).subscribe({
       next: (cv) => {
+        
         localStorage.removeItem(this.STORAGE_KEY);
         this.router.navigate([APP_ROUTES.cv]);
         this.toastr.success(`Le cv ${cv.firstname} ${cv.name}`);
