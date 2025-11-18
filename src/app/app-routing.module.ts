@@ -14,8 +14,19 @@ import { DetailsCvComponent } from "./cv/details-cv/details-cv.component";
 import { RhComponent } from "./optimizationPattern/rh/rh.component";
 import { TtcCalculatorComponent } from "./ttc-calculator/ttc-calculator.component";
 import { ColorInputComponent } from "./color-input/color-input.component";
+import { MasterDetailsCvComponent } from "./cv/master-details-cv/master-details-cv.component";
+import { DetailsComponent } from "./cv/details/details.component";
 
 const routes: Route[] = [
+
+  {
+    path: "master-detail-cv",
+    component: MasterDetailsCvComponent,
+    children: [
+      { path: ":id", component: DetailsComponent }
+    ]
+  },
+
   { path: "login", component: LoginComponent },
   { path: "rh", component: RhComponent },
   {

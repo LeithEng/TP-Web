@@ -1,6 +1,6 @@
 import { Component, inject, Signal } from "@angular/core";
 import { FormBuilder, AbstractControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { debounceTime, distinctUntilChanged, filter, Observable, switchMap, tap } from "rxjs";
+import { debounceTime, distinctUntilChanged, filter, Observable, of, switchMap, tap } from "rxjs";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { CvService } from "../services/cv.service";
 import {JsonPipe, NgStyle} from "@angular/common";
@@ -28,11 +28,19 @@ export class AutocompleteComponent {
   Searchresult$ =this.search.valueChanges.pipe(
     debounceTime(300),
     //filter to avoid empty searches
-    filter(name => !!name && name.trim().length > 0), //!!name to avoid null or undefined
     distinctUntilChanged(),
     tap((name) => console.log('Recherche en cours... | name = ',name)),
     //switchMap((name)=>this.cvService.selectByName(name))
-    switchMap((name) => this.cvService.selectByProps(["name","firstname","job"], name))
+    //switchMap((name) => this.cvService.selectByProps(["name","firstname","job"], name))
+    switchMap((name) => {
+      if(!name || name.trim().length ===0){
+        return of([]);
+      }
+      else{
+        return this.cvService.selectByProps(["name","firstname","job"], name);
+      }
+    }
+  )
   )
   searchResults = toSignal(this.Searchresult$,{initialValue:[]})
 

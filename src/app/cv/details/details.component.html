@@ -1,0 +1,20 @@
+<p>details works!</p>
+<div class="mb-3">test test : id = {{id$ | async}} test test</div>
+
+@if (cv(); as cv){
+    <div class="card">
+        <div class="card-body text-center">
+            <h3 class="card-title">{{cv.firstname}} {{cv.name}}</h3>
+            <img
+                [ngStyle]="{ width: '200px', height: '200px' }"
+                class="rounded-circle mb-3"
+                src="assets/images/{{cv.path | defaultImage}}"
+                alt="{{cv.name}}"
+            />
+            
+            <p class="mb-1"><strong>Age:</strong> {{cv.age}}</p>
+            <p class="mb-1"><strong>Cin:</strong> {{cv.cin}}</p>
+            <p class="mb-0"><strong>Job:</strong> {{cv.job}}</p>
+        </div>
+    </div>
+}
