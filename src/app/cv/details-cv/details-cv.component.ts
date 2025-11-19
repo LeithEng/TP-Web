@@ -8,6 +8,7 @@ import { AuthService } from '../../auth/services/auth.service';
 import { catchError, EMPTY, Observable, tap } from 'rxjs';
 
 @Component({
+  standalone: false,
   selector: 'app-details-cv',
   templateUrl: './details-cv.component.html',
   styleUrls: ['./details-cv.component.css'],

@@ -11,6 +11,7 @@ import { APP_ROUTES } from "src/config/routes.config";
 import { Cv } from "../model/cv";
 
 @Component({
+  standalone: false,
   selector: "app-add-cv",
   templateUrl: "./add-cv.component.html",
   styleUrls: ["./add-cv.component.css"],

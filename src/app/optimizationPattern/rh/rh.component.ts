@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {User, UsersService} from "../users.service";
 import * as ChartJs from 'chart.js/auto';
 @Component({
+  standalone: false,
   selector: 'app-rh',
   templateUrl: './rh.component.html',
   styleUrls: ['./rh.component.css']

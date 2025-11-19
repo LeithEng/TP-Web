@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 @Component({
+  standalone: false,
   selector: 'app-fils',
   templateUrl: './fils.component.html',
   styleUrls: ['./fils.component.css'],

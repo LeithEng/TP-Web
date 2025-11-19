@@ -3,6 +3,7 @@ import { Cv } from "../model/cv";
 import { CvService } from "../services/cv.service";
 
 @Component({
+  standalone: false,
   selector: "app-item",
   templateUrl: "./item.component.html",
   styleUrls: ["./item.component.css"],

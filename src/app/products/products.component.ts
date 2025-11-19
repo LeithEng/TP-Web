@@ -17,6 +17,7 @@ import { DEFAUT_SETTINGS } from "./constants/default-settings.contant";
 import { ProductApiResponse } from "./dto/product-api-response.dto";
 
 @Component({
+  standalone: false,
   selector: "app-products",
   templateUrl: "./products.component.html",
   styleUrls: ["./products.component.css"],

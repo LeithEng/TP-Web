@@ -9,6 +9,7 @@ export const fibonnaci = (n: number): number => {
 }
 
 @Component({
+  standalone: false,
   selector: 'app-user-list',
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.css']

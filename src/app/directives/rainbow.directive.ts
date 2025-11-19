@@ -3,6 +3,7 @@ import { BehaviorSubject, fromEvent, interval, map, Subject, Subscription, take,
 
 
 @Directive({
+  standalone: false,
   selector: 'input[appRainbow]',
 })
 export class RainbowDirective implements OnInit, OnDestroy {

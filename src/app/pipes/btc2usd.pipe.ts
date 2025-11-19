@@ -1,6 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 const change = 17443.8;
 @Pipe({
+  standalone: false,
   name: 'btc2usd',
 })
 export class Btc2usdPipe implements PipeTransform {

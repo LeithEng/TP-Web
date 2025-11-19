@@ -10,6 +10,7 @@ export interface TodoModel {
 }
 
 @Component({
+  standalone: false,
   selector: 'app-test-http',
   templateUrl: './test-http.component.html',
   styleUrls: ['./test-http.component.css'],

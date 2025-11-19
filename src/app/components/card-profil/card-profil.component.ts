@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
+  standalone: false,
   selector: 'app-card-profil',
   templateUrl: './card-profil.component.html',
   styleUrls: ['./card-profil.component.css'],

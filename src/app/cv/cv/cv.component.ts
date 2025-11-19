@@ -5,6 +5,7 @@ import { ToastrService } from "ngx-toastr";
 import { CvService } from "../services/cv.service";
 import { catchError, Observable, of, tap } from "rxjs";
 @Component({
+  standalone: false,
   selector: "app-cv",
   templateUrl: "./cv.component.html",
   styleUrls: ["./cv.component.css"],

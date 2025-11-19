@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 
 @Component({
+  standalone: false,
   selector: "app-color",
   templateUrl: "./color.component.html",
   styleUrls: ["./color.component.css"],

@@ -2,6 +2,7 @@ import { Component, Input } from "@angular/core";
 import { Observable, map, startWith, timer } from "rxjs";
 
 @Component({
+  standalone: false,
   selector: "app-slider",
   templateUrl: "./slider.component.html",
   styleUrls: ["./slider.component.css"],

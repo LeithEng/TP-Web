@@ -4,6 +4,7 @@ import { debounceTime, distinctUntilChanged, switchMap, tap } from "rxjs";
 import { CvService } from "../services/cv.service";
 
 @Component({
+  standalone: false,
   selector: "app-autocomplete",
   templateUrl: "./autocomplete.component.html",
   styleUrls: ["./autocomplete.component.css"],
