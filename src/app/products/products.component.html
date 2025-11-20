@@ -1,7 +1,16 @@
 <ng-container
   *ngIf="(products$ | async) as productsList, else loading"
 >
-<button (click)="loadMore()" [disabled]="!(hasMoreProducts$ | async)" class="btn btn-primary"> More Products</button>
+<button (click)="loadMore()" class="btn btn-primary"> More Products</button>
+
+<!--
+<div class="alert alert-success" *ngIf="!(hasMoreProducts$ | async)">
+  all products loaded.
+</div>
+-->
+
+
+
 <div class="alert alert-warning">
   Product Number: {{productsList?.length}}
 </div>
@@ -16,3 +25,5 @@
 <ng-template #loading>
   Loading...
 </ng-template>
+
+<!--[disabled]="!(hasMoreProducts$ | async)" -->

@@ -29,6 +29,42 @@ export class ProductsComponent {
     DEFAUT_SETTINGS
   );
 
+  products$ : Observable<Product[]> = this.settings$.pipe(
+     
+    concatMap((settings) => this.productService.getProducts(settings)),
+   
+    scan ((allResponses, newResponse) => {
+        const combinedProducts = [...allResponses.products, ...newResponse.products];
+        return {
+            ...newResponse,
+            products: combinedProducts
+        };
+      }
+    ),
+    
+    takeWhile((apiResponse) => apiResponse.skip +apiResponse.limit < apiResponse.total , true),
+    map((apiResponse) => apiResponse.products),
+  )
+
+   loadMore() {
+    console.log("Load more products clicked");
+    this.settings$.next({
+        limit : this.settings$.value.limit,
+        skip: this.settings$.value.skip + this.settings$.value.limit,
+    });
+    
+  }
+
+}
+
+/*
+
+
+*/
+
+  
+ 
+/*
 
   apiResponse$ : Observable<ProductApiResponse> = this.settings$.pipe(
     concatMap((settings) => this.productService.getProducts(settings)),
@@ -60,20 +96,6 @@ export class ProductsComponent {
     map(response => response.products.length < response.total)
   );
 
-  
-
-  
-  /*
-  loadMore() {
-    console.log("Load more products clicked");
-    this.settings$.next({
-        limit : this.settings$.value.limit,
-        skip: this.settings$.value.skip + this.settings$.value.limit,
-    });
-    
-  }
-  */
-
     loadMore() {
       console.log("Load more products clicked");
       this.hasMoreProducts$.pipe(take(1))
@@ -90,4 +112,5 @@ export class ProductsComponent {
           } 
         );
     }
-}
+
+    */
