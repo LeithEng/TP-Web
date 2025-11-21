@@ -57,7 +57,9 @@ export class AddCvComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.age.valueChanges.subscribe((age) => {
+    this.age.valueChanges
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe((age) => {
       if (age < 18 && age){
         this.path?.setValue("");
         this.path?.disable();
