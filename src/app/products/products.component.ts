@@ -68,9 +68,32 @@ export class ProductsComponent {
     });
     }
 
+}
 
 /*
-  products$ : Observable<Product[]> = this.settings$.pipe(
+loadMore() {
+      console.log("Load more products clicked");
+      this.hasMoreProducts$.pipe(take(1))
+        .subscribe(hasMore => {
+            if (hasMore) {
+                this.settings$.next({
+                  limit : this.settings$.value.limit,
+                  skip: this.settings$.value.skip + this.settings$.value.limit,
+                });
+            }
+            else {
+              console.log("No more products to load.");
+            }
+          } 
+        );
+    }
+
+*/
+
+  
+ 
+/*
+ products$ : Observable<Product[]> = this.settings$.pipe(
      
     concatMap((settings) => this.productService.getProducts(settings)),
    
@@ -96,17 +119,3 @@ export class ProductsComponent {
     
   }
 */
-}
-
-/*
-
-
-*/
-
-  
- 
-/*
-
-
-
-    */
