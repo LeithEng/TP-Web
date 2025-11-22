@@ -58,20 +58,30 @@ export class AddCvComponent implements OnInit {
 
   ngOnInit(): void {
     this.age.valueChanges
-    .pipe(takeUntilDestroyed(this.destroyRef))
-    .subscribe((age) => {
-      if (age < 18 && age){
-        this.path?.setValue("");
-        this.path?.disable();
-        this.toastr.info("path is disabled for minors");
-      }
-      else{
-        this.path?.enable();
-      }
-      
-    })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((age) => {
+        if (age < 18 && age){
+          this.path?.setValue("");
+          this.path?.disable();
+          this.toastr.info("path is disabled for minors");
+        }
+        else{
+          this.path?.enable();
+        }
+        }
+      );
 
-    this.loadFromLocalStorage();
+    const data = localStorage.getItem(this.STORAGE_KEY);
+    if (data){
+      try{
+        const formData = JSON.parse(data);
+        this.form.patchValue(formData);
+        this.toastr.info("Restored saved form data.");
+      }
+      catch (error){
+        this.toastr.error("Failed to parse saved form data.");
+      }
+    }
 
     this.form.valueChanges.pipe(
       debounceTime(500),
@@ -85,33 +95,10 @@ export class AddCvComponent implements OnInit {
     
   }
 
-  private loadFromLocalStorage(){
-    const data = localStorage.getItem(this.STORAGE_KEY);
-    if (data){
-      try{
-        const formData = JSON.parse(data);
-        this.form.patchValue(formData);
-        this.toastr.info("Restored saved form data.");
-      }
-      catch (error){
-        this.toastr.error("Failed to parse saved form data.");
-      }
-    }
-  }
-/*
-  private saveToLocalStorage(){
-    const formData = this.form.getRawValue();
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(formData));
-  }
-*/
-
- 
-
   addCv() {
     
     this.cvService.addCv(this.form.getRawValue() as Cv).subscribe({
       next: (cv) => {
-        
         localStorage.removeItem(this.STORAGE_KEY);
         this.router.navigate([APP_ROUTES.cv]);
         this.toastr.success(`Le cv ${cv.firstname} ${cv.name}`);
@@ -145,3 +132,26 @@ export class AddCvComponent implements OnInit {
     return this.form.get("cin")!;
   }
 }
+
+/*
+  private saveToLocalStorage(){
+    const formData = this.form.getRawValue();
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(formData));
+  }
+*/
+
+/*
+  private loadFromLocalStorage(){
+    const data = localStorage.getItem(this.STORAGE_KEY);
+    if (data){
+      try{
+        const formData = JSON.parse(data);
+        this.form.patchValue(formData);
+        this.toastr.info("Restored saved form data.");
+      }
+      catch (error){
+        this.toastr.error("Failed to parse saved form data.");
+      }
+    }
+  }
+*/
