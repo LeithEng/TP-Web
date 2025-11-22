@@ -15,9 +15,14 @@ import { DefaultImagePipe } from '../pipes/default-image.pipe';
 export class DetailsComponent {
   private acr = inject(ActivatedRoute);
   private cvService = inject(CvService);
+  /*
   id$= this.acr.params.pipe(
     map(params => params['id'])
-  )
+  )*/
+
+  id = this.acr.snapshot.params['id'];
+
+  
   cv = toSignal(
     this.acr.params.pipe(
       map(params => params['id']),
