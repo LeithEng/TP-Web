@@ -55,7 +55,7 @@ export class ProductsComponent {
     computation : (newProducts , previousProduct) =>{
       if (!previousProduct) return newProducts;
       if (newProducts.length === 0) return previousProduct.value; //hedhi zeyda
-      return [...previousProduct.value, ...newProducts]; 
+      return [...previousProduct.value, ...newProducts].reverse(); 
     } 
   })
 
