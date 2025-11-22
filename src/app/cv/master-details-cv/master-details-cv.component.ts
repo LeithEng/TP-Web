@@ -6,7 +6,8 @@ import { CvService } from '../services/cv.service';
 import { EmbaucheComponent } from '../embauche/embauche.component';
 import { ListComponent } from '../list/list.component';
 import { DatePipe, UpperCasePipe } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 
 @Component({
@@ -27,7 +28,8 @@ export class MasterDetailsCvComponent {
   private logger = inject(LoggerService);
   private toastr = inject(ToastrService);
   private cvService = inject(CvService);
-
+  private router = inject(Router);
+  private acr = inject(ActivatedRoute);
   cvs: Cv[] = [];
   selectedCv: Cv | null = null;
   date = new Date();
@@ -46,6 +48,8 @@ export class MasterDetailsCvComponent {
     });
     this.logger.logger("je suis le cvComponent");
     this.toastr.info("Bienvenu dans notre CvTech");
-    this.cvService.selectCv$.subscribe((cv) => (this.selectedCv = cv));
+    this.cvService.selectCv$
+      .pipe(takeUntilDestroyed())
+      .subscribe((cv) => (this.router.navigate([cv?.id], { relativeTo: this.acr })));
   }
 }

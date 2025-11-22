@@ -27,13 +27,12 @@ export class AutocompleteComponent {
 
   Searchresult$ =this.search.valueChanges.pipe(
     debounceTime(300),
-   
     distinctUntilChanged(),
     tap((name) => console.log('Recherche en cours... | name = ',name)),
     //switchMap((name)=>this.cvService.selectByName(name))
     //switchMap((name) => this.cvService.selectByProps(["name","firstname","job"], name))
     switchMap((name) => {
-      if(!name || name.trim().length ===0){
+      if(!name.trim()){
         return of([]);
       }
       else{

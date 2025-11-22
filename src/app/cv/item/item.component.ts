@@ -22,7 +22,13 @@ export class ItemComponent {
   @Input() size = 50;
 
   onSelectCv() {
-    if(this.acr.snapshot.toString().includes("master-detail-cv")){ 
+      console.log(this.acr.snapshot.toString());
+      this.cvService.selectCv(this.cv);
+    }
+}
+
+/*
+if(this.acr.snapshot.toString().includes("master-detail-cv")){ 
       console.log(this.acr.snapshot.toString());
       this.router.navigate(["/master-detail-cv", this.cv.id]);
     }
@@ -30,5 +36,4 @@ export class ItemComponent {
       console.log(this.acr.snapshot.toString());
       this.cvService.selectCv(this.cv);
     }
-  }
-}
+*/
