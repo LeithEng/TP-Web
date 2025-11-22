@@ -1,4 +1,4 @@
-import { Component, computed, inject, linkedSignal, signal } from "@angular/core";
+import { Component, computed, effect, inject, linkedSignal, signal } from "@angular/core";
 import { Product } from "./dto/product.dto";
 import { ProductService } from "./services/product.service";
 import { Settings } from "./dto/product-settings.dto";
@@ -27,7 +27,71 @@ export class ProductsComponent {
     ),
   });
 
-  /*
+
+  totalProducts = linkedSignal<number | undefined, number>({
+    source: () => (this.productResource.value()?.total),
+    computation: (source, previous) => {
+      //total is undefined take previous value
+      if (source === undefined) {
+        return previous?.value ?? 0;
+      }
+      return source;
+    }
+  });
+
+  currentProducts = linkedSignal<Product[] | undefined, Product[]>({
+    source: computed(() => this.productResource.value()?.products),
+    computation: (source, previous) => {
+      //products is undefined take previous value
+      if (source=== undefined) {
+        return previous?.value ?? [];
+      }
+      return source;
+    }
+  });
+
+  products = linkedSignal<Product[], Product[]>({
+    source : () => this.currentProducts(),
+    computation : (newProducts , previousProduct) =>{
+      if (!previousProduct) return newProducts;
+      if (newProducts.length === 0) return previousProduct.value; //hedhi zeyda
+      return [...previousProduct.value, ...newProducts]; 
+    } 
+  })
+
+  hasMoreProducts = computed(() => this.products().length < this.totalProducts());
+
+  loadMore() {
+    if (this.hasMoreProducts() && !this.productResource.isLoading()) {
+      this.settings.update(current => ({
+        ...current,
+        skip: current.skip + current.limit
+      }));
+    }
+  }
+
+   constructor() {
+    effect(() => {
+      console.log('=== important  Status ===');
+      console.log('Current Settings:', this.settings());
+      console.log('isLoading:', this.productResource.isLoading());
+      console.log('hasValue:', this.productResource.hasValue());
+      console.log('value:', this.productResource.value());
+      console.log('error:', this.productResource.error());
+      console.log('status:', this.productResource.status());
+      console.log('totalProducts :', this.totalProducts());
+      console.log('length of products :', this.products().length);
+      console.log('hasMoreProducts :', this.hasMoreProducts());
+      console.log('current products:', this.currentProducts());
+      console.log('products:', this.products());
+      console.log('**==============================**');
+    });
+  }
+  
+}
+
+
+/*
   totalProducts = linkedSignal<{ total: number | undefined; hasValue: boolean }, number>({
     source: computed(() => ({
       total: this.productResource.value()?.total,
@@ -42,6 +106,14 @@ export class ProductsComponent {
     }
   });
 */
+
+/*
+  isLoading = computed(() => this.productResource.isLoading());
+*/
+
+/*
+old version:
+
 
   totalProducts = linkedSignal<number | undefined, number>({
     source: () => (this.productResource.value()?.total),
@@ -77,15 +149,13 @@ export class ProductsComponent {
   })
 
   hasMoreProducts = computed(() => {
-    console.log("cuerrent settings:", this.settings());
+    console.log("current products length:",this.products().length );
     console.log("total products:", this.totalProducts());
-    const current = this.settings();
+    const currentProductLength = this.products().length;
     const total = this.totalProducts();
-    return (current.skip + current.limit) < total;
+    return currentProductLength < total;
   });
-/*
-  isLoading = computed(() => this.productResource.isLoading());
-*/
+
   loadMore() {
     if (this.hasMoreProducts() && !this.productResource.isLoading()) {
       this.settings.update(current => ({
@@ -94,5 +164,5 @@ export class ProductsComponent {
       }));
     }
   }
-  
-}
+
+  */
