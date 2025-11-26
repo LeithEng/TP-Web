@@ -3,7 +3,6 @@ import { ToastrService } from 'ngx-toastr';
 import { LoggerService } from 'src/app/services/logger.service';
 import { Cv } from '../model/cv';
 import { CvService } from '../services/cv.service';
-import { EmbaucheComponent } from '../embauche/embauche.component';
 import { ListComponent } from '../list/list.component';
 import { DatePipe, UpperCasePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
@@ -11,13 +10,7 @@ import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 @Component({
   selector: 'app-master-details-cv',
   standalone: true,
-  imports: [
-    ListComponent,
-    EmbaucheComponent,
-    UpperCasePipe,
-    DatePipe,
-    RouterOutlet,
-  ],
+  imports: [ListComponent, UpperCasePipe, DatePipe, RouterOutlet],
   templateUrl: './master-details-cv.component.html',
   styleUrls: ['./master-details-cv.component.css'],
 })

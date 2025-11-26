@@ -31,4 +31,17 @@
     </div>
   </div>
 </div>
+
+@defer (on idle) {
 <app-embauche></app-embauche>
+} @placeholder {
+<div class="alert alert-light text-center">
+  <small class="text-muted"
+    >Le composant embauche se chargera automatiquement...</small
+  >
+</div>
+} @loading (minimum 300ms) {
+<div class="alert alert-info text-center">
+  <i class="fa fa-spinner fa-pulse"></i> Préparation du composant embauche...
+</div>
+}

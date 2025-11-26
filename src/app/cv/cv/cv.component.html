@@ -10,4 +10,19 @@
     <app-cv-card [cv]="selectedCv()"></app-cv-card>
   </div>
 </div>
+
+@defer (on viewport) {
 <app-embauche></app-embauche>
+} @placeholder {
+<div class="alert alert-secondary text-center">
+  <i class="fa fa-spinner fa-spin"></i> Chargement du composant embauche...
+</div>
+} @loading (minimum 500ms) {
+<div class="alert alert-info text-center">
+  <i class="fa fa-refresh fa-spin"></i> Chargement en cours...
+</div>
+} @error {
+<div class="alert alert-danger">
+  Erreur lors du chargement du composant embauche
+</div>
+}
