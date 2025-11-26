@@ -1,4 +1,11 @@
-import { Component, inject, input, resource, Signal } from '@angular/core';
+import {
+  Component,
+  effect,
+  inject,
+  input,
+  resource,
+  Signal,
+} from '@angular/core';
 import { Cv } from '../model/cv';
 import { CvService } from '../services/cv.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -30,10 +37,10 @@ export class DetailsCvComponent {
   cv = this.cvResource.value;
   isLoading = this.cvResource.isLoading;
   error = this.cvResource.error;
-  hasError = this.cvResource.hasError;
 
   constructor() {
-    this.cvResource.error.subscribe((error) => {
+    effect(() => {
+      const error = this.cvResource.error();
       if (error) {
         this.toastr.error('CV introuvable');
         this.router.navigate([APP_ROUTES.cv]);
