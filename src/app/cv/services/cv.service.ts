@@ -1,29 +1,59 @@
-import { Injectable, inject } from "@angular/core";
-import { Cv } from "../model/cv";
-import { Observable, Subject } from "rxjs";
-import { HttpClient, HttpParams } from "@angular/common/http";
-import { API } from "../../../config/api.config";
+import { Injectable, inject, signal, computed, Signal } from '@angular/core';
+import { Cv } from '../model/cv';
+import { Observable, Subject } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { API } from '../../../config/api.config';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class CvService {
   private http = inject(HttpClient);
 
   private cvs: Cv[] = [];
+
+  // Signal pour la liste des CVs
+  private cvsWritableSignal = signal<Cv[]>([]);
+  public readonly cvsSignal: Signal<Cv[]> = this.cvsWritableSignal.asReadonly();
+
+  // Signal pour le CV sélectionné
+  private selectedCvWritableSignal = signal<Cv | null>(null);
+  public readonly selectedCvSignal: Signal<Cv | null> =
+    this.selectedCvWritableSignal.asReadonly();
+
   /**
-   * Le subject permettant de créer le flux des cvs sélectionnés
+   * Le subject permettant de créer le flux des cvs sélectionnés (legacy)
    */
   #selectCvSuject$ = new Subject<Cv>();
   /**
-   * Le flux des cvs sélectionnés
+   * Le flux des cvs sélectionnés (legacy)
    */
   selectCv$ = this.#selectCvSuject$.asObservable();
+
   constructor() {
     this.cvs = [
-      new Cv(1, "aymen", "sellaouti", "teacher", "as.jpg", "1234", 40),
-      new Cv(2, "skander", "sellaouti", "enfant", "       ", "1234", 4),
+      new Cv(1, 'aymen', 'sellaouti', 'teacher', 'as.jpg', '1234', 40),
+      new Cv(2, 'skander', 'sellaouti', 'enfant', '       ', '1234', 4),
     ];
+
+    // Charger les CVs au démarrage
+    this.loadCvs();
+  }
+
+  /**
+   * Charge les CVs depuis l'API et met à jour le signal
+   */
+  private loadCvs(): void {
+    this.getCvs().subscribe({
+      next: (cvs) => {
+        this.cvsWritableSignal.set(cvs);
+      },
+      error: () => {
+        // En cas d'erreur, utiliser les données fictives
+        this.cvsWritableSignal.set(this.getFakeCvs());
+      },
+    });
   }
 
   /**
@@ -110,7 +140,7 @@ export class CvService {
    */
   selectByName(name: string) {
     const search = `{"where":{"name":{"like":"%${name}%"}}}`;
-    const params = new HttpParams().set("filter", search);
+    const params = new HttpParams().set('filter', search);
     return this.http.get<any>(API.cv, { params });
   }
   /**
@@ -121,7 +151,7 @@ export class CvService {
    */
   selectByProperty(property: string, value: string) {
     const search = `{"where":{"${property}":"${value}"}}`;
-    const params = new HttpParams().set("filter", search);
+    const params = new HttpParams().set('filter', search);
     return this.http.get<Cv[]>(API.cv, { params });
   }
 
@@ -131,6 +161,35 @@ export class CvService {
    * @param cv : Le cv à ajouter dans le flux des cvs sélectionnés
    */
   selectCv(cv: Cv) {
-    this.#selectCvSuject$.next(cv);
+    this.selectedCvWritableSignal.set(cv);
+    this.#selectCvSuject$.next(cv); // Pour la rétrocompatibilité
+  }
+
+  /**
+   * Recharge les CVs depuis l'API
+   */
+  refreshCvs(): void {
+    this.loadCvs();
+  }
+
+  /**
+   * Met à jour le signal des CVs après une suppression
+   */
+  updateCvsAfterDelete(id: number): void {
+    const currentCvs = this.cvsWritableSignal();
+    this.cvsWritableSignal.set(currentCvs.filter((cv) => cv.id !== id));
+
+    // Désélectionner le CV si c'est celui supprimé
+    if (this.selectedCvWritableSignal()?.id === id) {
+      this.selectedCvWritableSignal.set(null);
+    }
+  }
+
+  /**
+   * Met à jour le signal des CVs après un ajout
+   */
+  updateCvsAfterAdd(cv: Cv): void {
+    const currentCvs = this.cvsWritableSignal();
+    this.cvsWritableSignal.set([...currentCvs, cv]);
   }
 }
