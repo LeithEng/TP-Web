@@ -29,7 +29,7 @@ export class DetailsCvComponent {
   private activatedRoute = inject(ActivatedRoute);
   private toastr = inject(ToastrService);
   authService = inject(AuthService);
-  private idFromRoute = input.required<string>({ alias: 'id' });
+  idFromRoute = input.required<string>({ alias: 'id' });
   cvResource = rxResource({
     request: () => ({ id: +this.idFromRoute() }),
     loader: ({ request }) => this.cvService.getCvById(request.id),

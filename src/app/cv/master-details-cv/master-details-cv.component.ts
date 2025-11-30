@@ -6,11 +6,12 @@ import { CvService } from '../services/cv.service';
 import { ListComponent } from '../list/list.component';
 import { DatePipe, UpperCasePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+import { EmbaucheComponent } from '../embauche/embauche.component';
 
 @Component({
   selector: 'app-master-details-cv',
   standalone: true,
-  imports: [ListComponent, UpperCasePipe, DatePipe, RouterOutlet],
+  imports: [ListComponent, UpperCasePipe, DatePipe, RouterOutlet, EmbaucheComponent],
   templateUrl: './master-details-cv.component.html',
   styleUrls: ['./master-details-cv.component.css'],
 })
