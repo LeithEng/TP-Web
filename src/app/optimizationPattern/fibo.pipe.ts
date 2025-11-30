@@ -2,6 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'fibo',
+  standalone:false,
   pure: true,
 })
 export class FiboPipe implements PipeTransform {

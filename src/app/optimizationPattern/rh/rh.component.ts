@@ -28,7 +28,7 @@ export class RhComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.zone.runOutsideAngular(() => this.createChart());
+    this.createChart();
   }
   addUser(list: User[], newUser: string) {
     if (list === this.oddUsers) {
